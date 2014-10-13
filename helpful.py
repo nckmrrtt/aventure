@@ -8,11 +8,12 @@ import cPickle as pickle
 
 class Being:
 
-    def __init__(self,name,health=100,inventory=[],money=0):
+    def __init__(self,name,health=100,inventory=[],money=0,score=1):
         self.name = name #str
         self.health = health #int
         self.inventory = inventory #list of Item objects
         self.money = money #ca$h monies
+        self.score = 1;
 
     def __str__(self):
         return str(self.name)
@@ -37,15 +38,6 @@ class Being:
 
     def set_name(self,new_name):
         self.name = new_name
-
-    def get_money(self):
-        return self.money
-
-    def gain_money(self,amount):
-        self.money += amount
-
-    def lose_money(self,amount):
-        self.money -= amount
     
     def get_health(self):
         return self.health
@@ -59,9 +51,30 @@ class Being:
     def lose_health(self,amount):
         self.health -= amount
 
+    def get_money(self):
+        return self.money
+
+    def gain_money(self,amount):
+        self.money += amount
+
+    def lose_money(self,amount):
+        self.money -= amount
+
+    def set_score(self,score):
+        self.score = score
+
+    def get_score(self,score):
+        return self.score
+
+    def gain_score(self,score):
+        self.score += score
+
+    def lose_score(self,score):
+        self.score -= score
+
     def use(self,item,times=1):
         """
-        they get to cheat
+        they get to cheat, no use checks
         """
         item.use(times)
 
@@ -110,13 +123,14 @@ class Being:
 
 class Player(Being):
 
-    def __init__(self,name,health=100,inventory=[],money=0):
+    def __init__(self,name,health=100,inventory=[],money=0,score=0):
 
         self.title = 'the Worthless'
         self.name = name #str
         self.health = health #int
         self.inventory = inventory #list of Item objects
         self.money = money #get dat money
+        self.score = 0;
 
     # def get_attr(self,attr): ###perhaps
     #     return self.attrs[attr]
@@ -303,8 +317,9 @@ def pick_item(choices_arg, question='Which one?',break_before=None):
             final = ''
             if choices_alt:
                 for index in range(len(choices_alt)): #check if they typed letters
-                    item = choices_alt[index]
-                    if chosen == str(item).lower():
+                    item = str(choices_alt[index]).lower()
+                    item2 = str(choices[index]).lower()
+                    if chosen == item or chosen == item2:
                         final = choices[index]
                         staying = False
 
@@ -325,13 +340,14 @@ def hiscore(new_name,new_score):
     try:
         pairs = pickle.load(open("hiscores.txt", "rb"))
     except:
-        pairs = [["Gutis", 54], ["jcho", 8], ["The Superior John", 8], ["Juan Carlos", 4], ["Anita", 1]]
+        pairs = [["Gutis", 54], ["jcho", 8], ["The Superior John", 8], ["Katana", 7], ["Anita", 1]]
 
-    pairs = [[new_name,new_score]] + pairs
+    if not debug:
+        pairs = [[new_name,new_score]] + pairs
 
     pairs = sorted(pairs,key=operator.itemgetter(1)) #sort by score
     pairs.reverse()
-    pairs = pairs[:min(len(pairs),30)] #if we get to 10 (no, how about 25) we start bumping people off!
+    pairs = pairs[:min(len(pairs),30)] #if we get to 10 (no, how about 30) we start bumping people off!
 
     hiscore_string = ''
     for idx in range(len(pairs)):

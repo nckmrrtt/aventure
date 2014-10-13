@@ -8,6 +8,10 @@ AVENTUREGAME
 
 TODO: 
 
+    MAP FOR MTN AND TUNNEL ASAP
+    ALSO FILLEMOUT cuz they don't do danything
+    ALSO
+
     choices not change?
 
     good pts vs evil pts 
@@ -23,8 +27,6 @@ TODO:
 
     In tavern change to code within tavern func
 
-    fight run
-    run away safely
     monsters with no inventory => scratch, bite, etc?
 
     find items laying around
@@ -113,7 +115,9 @@ def fight(who_fight=None):
         ###else picks a monster at random, not boss though
         enemy = items_lists.random_monster()
 
-    # print 'fighting:\n' + enemy.advanced_str()
+    if debug:
+        print '<\n\nfighting:\n' + enemy.advanced_str() +'\n>'
+
     encountered = words.being_adj().capitalize() + ' ' + str(enemy)
     raw_input(str(player) + ' encounters a ' + encountered + '!\n')
     choice = helpful.pick_item(['yes','no','inventory'],'Fight?','inventory')
@@ -219,10 +223,13 @@ def inspect_inventory(sell=False):
                               "That's $" + str(cost) + ' more in your pocket.\n')
 
     else: #if not selling
+        print '\n'.join([player.get_name() + ' ' + player.get_title(), \
+                          '='*len(player.get_name() + ' ' + player.get_title()), \
+                          'Health: ' + str(player.get_health())])
         while choice != 'done':
             choices = list(player.get_inventory())
             choices += ['done']
-            intro = 'Type item name/number for more info...\n\nInventory:'        
+            intro = '\nType item name/number for more info...\n\nInventory:'        
             choice = helpful.pick_item(choices,intro,'done')
             if choice == 'done':
                 return
@@ -335,7 +342,9 @@ def visit(location):
     
     dying is no return
     """
-    
+    if debug:
+        print "<visiting " + str(location) + ">\n"
+
     func_map = {
                 'woods':woods_0_0,
                 'purchase beer':beer,
@@ -350,9 +359,9 @@ def visit(location):
     global map_0, map_1, map_2
 
     # reset map
-    map_0 = '|         |' + map_0[12:]
-    map_1 = '|         |' + map_1[12:]
-    map_2 = '|         |' + map_2[12:]
+    map_0 = map_0[:12] + '|         |' + map_0[24:]
+    map_1 = map_1[:12] + '|         |' + map_1[24:]
+    map_2 = map_2[:12] + '|         |' + map_2[24:]
 
     locations_list = func_map.keys()
     
@@ -394,7 +403,7 @@ def tavern():
     global press_enter, enter_two, enter_four
 
     global map_1
-    map_1 = '|    T    |' + map_1[12:]
+    map_1 = map_1[:12] + '|    T    |' + map_1[24:]
 
     if not tavern_name:
         tavern_name = 'The ' + words.tavern_adj().capitalize() + ' ' + \
@@ -450,28 +459,29 @@ def beer():
     """
     should only be called from in the tavern
     """
-    global cheated
+    global cheated, enter_four
 
     if enter_four == config.confus(config.config4):
-        player.grab(helpful.Item('SixPack',10,0,0,6))
+        player.grab(helpful.Item('SixPack',17,0,0,6))
         cheated = True
         print '<achievement unlocked>\n'
+        enter_four = ''
 
-    if player.get_money() >= 17:
+    if player.get_money() >= 100:
 
-        player.set_health(100)
+        player.gain_health(17)
         player.lose_money(17)
 
         raw_input('You take out your money.\n')
-        raw_input(bartender_name + ' chuckles.\n')
+        raw_input(bartender_name + "'s eyes widen at your stack of bills.\n")
         raw_input('"I guess we have this stuff, if you really need a drink."\n')
 
-        raw_input("The 'beer' healed you!\n")
+        raw_input("The 'beer' healed you a bit.\n")
         raw_input('It also cost $17.\n')
         
     else:
         print bartender_name + ' chuckles and looks pointedly at his empty tip jar.\n'
-        raw_input('"' +"We're out of beer." + '"\n')
+        raw_input('"' +"Beer's expensive, kid." + '"\n')
         raw_input('"Nice try."\n')
 
 def buy_map():
@@ -594,13 +604,21 @@ def imp_weapons():
             BORIS_CRED += 2
         else:
             raw_input('"' + "YOU OBVIOUSLY DON'T HAVE A MILLION DOLLARS. THAT'S OKAY THOUGH." +'"\n')
-            choice = pick_item(["$100","$10","Haha. No."],"Donate to Boris?")
+            choice = helpful.pick_item(["$100","$10","Haha. No."],"Donate to Boris?")
             if choice == "$100":
-                player.lose_money(100)
-                BORIS_CRED += 50
+                if player.get_money() > 100:
+                    player.lose_money(100)
+                    BORIS_CRED += 50
+                else:
+                    BORIS_CRED -= 10
+                    raw_input("Yikes. You don't have that much. Oops. Boris is a little sad.\n\nHe agrees to help you though.\n")
             elif choice == "$10":
-                player.lose_money(10)
-                BORIS_CRED += 2
+                if player.get_money() > 10:
+                    player.lose_money(10)
+                    BORIS_CRED += 2
+                else:
+                    BORIS_CRED -=2
+                    raw_input("Yikes. You don't have that much. Oops. Boris is a little sad.\n\nHe agrees to help you though.\n")
             else:
                 BORIS_CRED -= 10 
     else:
@@ -608,21 +626,29 @@ def imp_weapons():
         BORIS_CRED -= 5
         return
 
-    while talk != "Done":
+    improve = "poop"
+    while improve != "Done":
         improve = helpful.pick_item(player.get_inventory() + ['"Never mind, I want a refund."'],'"WHAT WOULD YOU LIKE TO IMPROVE?"\n')
-        if choice == '"Never mind, I want a refund."':
+        if improve == '"Never mind, I want a refund."':
             raw_input('"NO REFUNDS."\n')
             BORIS_CRED -= 1
             continue
         if BORIS_CRED > 900000:
-            improve.inc_damage(100)
+            incd = 100
         elif BORIS_CRED > 100:
-            improve.inc_damage(10)
+            incd = 10
         else:
-            improve.inc_damage(5)
-        raw_input('"OKAY, I IMPROVED YER ' + str(improve) + '"\n')
-        print(improve.advanced_str())
-        raw_input('"YOU' + "'" + 'RE WELCOME."\n')
+            incd = 4
+        if improve.get_damage() > 0:
+            improve.inc_damage(incd)
+            which = "DAMAGE"
+        elif improve.get_health() > 0:
+            improve.inc_health(incd)
+            which = "HEALTH"
+        print '"OKAY, I IMPROVED YER ' + str(improve).upper() + ' BY ' + str(incd) + 'POINTS OF ' + (which) + '."\n'
+        raw_input(improve.advanced_str())
+        raw_input('\n"YOU' + "'" + 'RE WELCOME."\n')
+        break
 
 def traveler():
     """ TODO """
@@ -649,7 +675,8 @@ def arena():
 
     if not arena_boss:
         arena_boss = items_lists.random_monster('boss_monsters')
-        # print '<arena boss = ' + str(arena_boss) + '>\n'
+        if debug:
+            print '<arena boss = ' + str(arena_boss) + '>\n'
 
     raw_input("You enter a terrifyingly massive arena.\n")
     raw_input("Thousands of bloodthirsty fans are screaming your name.\n")
@@ -720,16 +747,17 @@ def bongos():
         if bongo_code_8 == '':
             print 'yolo'
         elif bongo_code_7 == 'b3188adab3f07e66582bbac456dcd212':
+            player.grab(helpful.Item('Cabbage',5,0,3,1))
             raw_input('a plant appears')
         elif bongo_code_7 == '54a28e933e22fbabf29e267dd3f5c908':
-            raw_input('a giant computer appears')
+            code = getpass.getpass('a giant computer appears')
 
         # print 'bongocode',bongo_code_6,bongo_code_8
         # print 'bongostring',bongo_string
 
 
     raw_input("You leave the mystical bongo circle, but to your amazement, " + \
-              "the woods have shifted around you.\n")
+              "the sky is a bizarre green color, and the woods have shifted around you.\n")
     next = [
             'woods_1_1','woods_n1_1','woods_1_n1','woods_n1_n1','arena'
             ]
@@ -748,7 +776,7 @@ def woods_0_0():
     +---------+
     """
     global woods_0_0_name, map_1
-    map_1 = '|    X    |' + map_1[12:]
+    map_1 = map_1[:12] + '|    X    |' + map_1[24:]
 
     try:
         print "You're in " + woods_0_0_name + "!\n"
@@ -778,7 +806,7 @@ def woods_0_1():
     +---------+
     """
     global woods_0_1_name,map_0
-    map_0 = '|    X    |' + map_0[12:]
+    map_0 = map_0[:12] + '|    X    |' + map_0[24:]
     try:
         raw_input("You enter " + woods_0_1_name + "!\n")
     except:
@@ -810,7 +838,7 @@ def woods_0_n1():
     +---------+
     """
     global woods_0_n1_name,map_2
-    map_2 = '|    X    |' + map_2[12:]
+    map_2 = map_2[:12] + '|    X    |' + map_2[24:]
     try:
         raw_input("You enter " + woods_0_n1_name + "!\n")
     except:
@@ -841,7 +869,7 @@ def woods_1_0():
     +---------+
     """
     global woods_1_0_name,map_1
-    map_1 = '|       X |' + map_1[12:]
+    map_1 = map_1[:12] + '|       X |' + map_1[24:]
     try:
         print "You enter " + woods_1_0_name + ".\n"
     except:
@@ -874,7 +902,7 @@ def woods_1_1():
     +---------+
     """
     global woods_1_1_name,map_0
-    map_0 = '|       X |' + map_0[12:]
+    map_0 = map_0[:12] + '|       X |' + map_0[24:]
     try:
         raw_input("You enter " + woods_1_1_name + ".\n")
     except:
@@ -906,7 +934,7 @@ def woods_1_n1():
     +---------+
     """
     global woods_1_n1_name,map_2
-    map_2 = '|       X |' + map_2[12:]
+    map_2 = map_2[:12] + '|       X |' + map_2[24:]
     try:
         raw_input("You enter " + woods_1_n1_name + ".\n")
     except:
@@ -938,7 +966,7 @@ def woods_n1_0():
     +---------+
     """
     global woods_n1_0_name,map_1
-    map_1 = '| X       |' + map_1[12:]
+    map_1 = map_1[:12] + '| X       |' + map_1[24:]
     try:
         print "You enter " + woods_n1_0_name + ".\n"
     except:
@@ -946,7 +974,7 @@ def woods_n1_0():
         woods_n1_0_name = words.woods_name()
         print "You enter " + woods_n1_0_name + ".\n"
 
-    raw_input("There's a giant colosseum in the distance...\n")
+    raw_input("Uh oh...\n")
 
     monsta_here = round(random.random() +.3)
     if monsta_here:
@@ -954,11 +982,13 @@ def woods_n1_0():
         if result == 'death':
             return result
     else:
-        raw_input("Hmm... something ominous is definitely lurking here...\n")
+        print "You smell smoke, and a faint whiff of burning flesh.\n"
+        print "There's a giant mountain in the distance. It looks pretty climbable.\n"
+        raw_input("Something ominous is definitely lurking here, though...\n")
     
     next = (
-            ['woods_0_0','woods_n1_1','woods_n1_n1','arena'],
-            ["East","North","South","Arena"]
+            ['woods_0_0','woods_n1_1','woods_n1_n1','mountain_base'],
+            ["East","North","South","Mountain"]
             )
 
     return pick_place(next,'Where to next?')
@@ -973,7 +1003,7 @@ def woods_n1_1():
     +---------+
     """
     global woods_n1_1_name,map_0
-    map_0 = '| X       |' + map_0[12:]
+    map_0 = map_0[:12] + '| X       |' + map_0[24:]
     try:
         raw_input("You enter " + woods_n1_1_name + ".\n")
     except:
@@ -1007,7 +1037,7 @@ def woods_n1_n1():
     +---------+
     """
     global woods_n1_n1_name,map_2
-    map_2 = '| X       |' + map_2[12:]
+    map_2 = map_2[:12] + '| X       |' + map_2[24:]
     try:
         raw_input("You enter " + woods_n1_n1_name + ".\n")
     except:
@@ -1037,6 +1067,43 @@ def main_tunnel():
     raw_input('The tunnel is dark, and water begins dripping on your head.\n')
     raw_input('There are several branching tunnels, one of which is covered in strange markings.\n')
 
+    next = (
+            ['tunnel_0','tunnel_1','tunnel_strange']
+            ['Left branch','Right branch','Strange markings']
+            )
+
+    return pick_place(next,'Which tunnel?')
+
+def tunnel_0():
+    """
+    you enter this tunnel from main_tunnel
+    """
+    print "TODO TUNNEL 0"
+    return 'main_tunnel'
+
+def tunnel_1():
+    """
+    you enter this tunnel from main_tunnel
+    """
+    print "TODO TUNNEL 1"
+    return 'main_tunnel'
+
+def tunnel_strange():
+    """
+    you enter this tunnel from main_tunnel
+    """
+    print "TODO TUNNEL S"
+    return 'main_tunnel'
+
+### mountain ###
+
+def mountain_base():
+    """
+    you enter the mountain base from woods_n1_0
+    """
+    print "TODO mb"
+    return 'woods_n1_0'
+
 ### death ###
 
 def death():
@@ -1048,7 +1115,7 @@ def death():
         hiscores = helpful.hiscore(str(player),monsters_defeated)
     else:
         raw_input('cheaters never win\n')
-        raw_input('#suxtosuck\n')
+        raw_input('suxtosuck\n')
         hiscores = helpful.hiscore(str(player),0)
 
     raw_input(hiscores)
@@ -1086,39 +1153,24 @@ def start_game():
     global press_enter, enter_two, enter_four
     global hardcore; hardcore = False
     global player
-    global monsters_defeated
-    global bongo_string
+    global debug; debug = False
+    global monsters_defeated; monsters_defeated = 0;
+    global bongo_string; bongo_string = 'sevenya'
 
     global world_map #well I hope so
-    global map_0
-    global map_1
-    global map_2
-
-    global tavern_name
-    global bartender_name
-    global traveler_name
-    global arena_boss
-    global BORIS_CRED
-
-    global cheated
-
-    hardcore = False
-    monsters_defeated = 0
-    bongo_string = 'sevenya'
-
     world_map = False
-    map_0 = '|         |    '
-    map_1 = '|         |    '
-    map_2 = '|         |    '
+    global map_0; map_0 = '             |         |    '
+    global map_1; map_1 = '             |         |    '
+    global map_2; map_2 = '             |         |    '
 
-    tavern_name = ''
-    bartender_name = ''
-    traveler_name = ''
-    arena_boss = ''
-    BORIS_CRED = 0
+    global tavern_name; tavern_name = ''
+    global bartender_name; bartender_name = ''
+    global traveler_name; traveler_name = ''
+    global arena_boss; arena_boss = ''
+    global BORIS_CRED; BORIS_CRED = 0
 
-    in_tavern = False
-    cheated = False
+    global cheated; cheated = False
+    global in_tavern; in_tavern = False
 
     ### the story begins ###
 
@@ -1130,40 +1182,66 @@ def start_game():
     print('\n'*100)
 
     if press_enter[0:4] =='yolo':
-        hardcore = True
-        cheated = True ###TODO remove this and make this actually do things, like double score, etc
+        hardcore = True ###TODO remove this and make this actually do things, like double score, etc
+        cheated = True 
         raw_input('<hardcore mode activated>\n')
 
     name = raw_input('Name?\n\n')
     if name == '':
         name = 'Nameless One'
+    if name == 'debug':
+        name = 'Valiant Beta Tester'
+        print "<debug mode activated>\n"
+        debug = True
+
     player = helpful.Player(name) #name character
 
     raw_input('\nWelcome, '+ str(player) +'!\n')
-    print 'You are a poor orphan, determined to make your way in the world.\n'
-    raw_input('You have nothing but the clothes on your back (which you stole) ' + \
-              'and an odd-looking fruit.\n')
-    raw_input("You've heard rumors of a giant, horrifying dragon terrorizing the " + \
-              'land.\n\nIf you can defeat him, surely you will be remembered ' + \
-              'as more than just a smelly, penniless orphan.\n')
-    raw_input('Good luck!\n')
+    raw_input('You wake up slightly dizzy and very thirsty. You are sitting on a dirt path.\n')
+    raw_input('You have no idea how you got here, or even who you are.\n')
+    raw_input('The last thing you remember is an old man telling you...\n')
+    raw_input("Telling you...\n")
+    raw_input("Wow, you really can't remember anything. Your head hurts a lot.\n")
+    raw_input("You can't remember exactly what he told you. Something about dragons.\n")
+    raw_input("There's a weird fruit next to you. It has a note on it:\n")
+    raw_input("  MYTHICAL KUMQUAT\n" + \
+              "                  \n" + \
+              "  (do not lose me)\n")
+    raw_input("There's also a basket of supplies. You should take some.\n")
 
     print ('\n'*10)
     bag =      [
                items_lists.random_weapon('short_weapons'),
+               items_lists.random_weapon('short_weapons'),
+               items_lists.random_weapon('short_weapons'),
                items_lists.random_weapon('long_weapons'),
-               helpful.Item('apple',50,0,5,1),
-               helpful.Item('pizza',10,0,14.99,8),
-               helpful.Item('laser',0,50,0,15)
+               items_lists.random_weapon('long_weapons'),
+               helpful.Item('laser',0,50,0,12)
                ]
 
-    num_choices = 3
+    random.shuffle(bag)
+    num_choices = 1
+    if not hardcore:
+        num_choices = 3
+
     while num_choices > 0:
-        item = helpful.pick_item(bag,str(num_choices) + ' starting items left to choose!')
+        text = str(num_choices) + ' starting weapons left to choose!'
+        if num_choices == 1:
+            text = 'Last one!'
+        item = helpful.pick_item(bag,text)
         bag.remove(item)
         player.grab(item)
         print 'You acquired a ' + str(item) + '.\n'
         num_choices -= 1
+
+    if not hardcore:
+        bag =  [
+               helpful.Item('apple',50,0,5,1),
+               helpful.Item('pizza',10,0,14.99,8),
+               helpful.Item('turnip',28,0,2,1)
+               ]
+        item = helpful.pick_item(bag,'Now choose a foodstuff!')
+        player.grab(item)
 
     raw_input('Let the adventure begin!\n')
 
@@ -1180,11 +1258,25 @@ def start_game():
 
 if __name__ == '__main__':
 
-    try:
-        start_game()
-    except:
-        print '\nWe ran into an error.\n'
-        print 'Admin will be notified.\n'
-        logging.exception("AventureGameError:") #LOG
+    while 1:
+        try:
+                start_game()
+        except:
+            print '\nWe ran into an error.\n'
+            print 'Admin will be notified.\n'
+            logging.exception("AventureGameError:") #LOG
 
+        choice_count = 0
+        choice = "n"
+        question = "Play again? (y/n)"
+
+        while choice == "n":
+            choice_count += 1
+            choice = helpful.pick_item((["y","n"],["yes","no"]),question)
+            if choice_count < 3:
+                question = "No, really.\n"
+            elif choice_count < 7:
+                question = "I'm serious. Play again.\n"
+            elif choice_count < 15:
+                question = "Just press yes.\n"
 
