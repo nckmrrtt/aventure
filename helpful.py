@@ -54,6 +54,9 @@ class Being:
     def get_money(self):
         return self.money
 
+    def set_money(self,money):
+        self.money = money
+
     def gain_money(self,amount):
         self.money += amount
 
@@ -302,6 +305,17 @@ def pick_item(choices_arg, question='Which one?',break_before=None):
 
         print('') #get some blank line in here yo
         chosen = raw_input('').lower()
+
+        # global debug ###TODO MAKE THIS WORK
+        # if debug:
+        #     if chosen[0:5] == "money":
+        #         raw_input("<debug money+100>\n")
+        #         player.gain_money(100)
+        #         continue
+        #     elif chosen[0:6] == "health":
+        #         raw_input("<debug health+100>\n")
+        #         player.gain_health(100)
+        #         continue
         
         try:
             final = ''
@@ -340,9 +354,9 @@ def hiscore(new_name,new_score):
     try:
         pairs = pickle.load(open("hiscores.txt", "rb"))
     except:
-        pairs = [["Gutis", 54], ["jcho", 8], ["The Superior John", 8], ["Katana", 7], ["Anita", 1]]
+        pairs = [["Gutis", 54], ["jcho", 8], ["The Superior John", 8], ["Katana", 7], ["Batman", 55]]
 
-    if not debug:
+    if new_name != "<debug>":
         pairs = [[new_name,new_score]] + pairs
 
     pairs = sorted(pairs,key=operator.itemgetter(1)) #sort by score

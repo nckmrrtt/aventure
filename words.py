@@ -88,10 +88,27 @@ def noun():
     return random.choice(noun_list)
 
 def pluralize(noun):
+    """
+    pluralize a string
+    pup -> pups
+    puppy -> puppies
+    """
     if noun[len(noun)-1] == "y":
         noun = noun[:-1] + "ie"
     noun = noun + "s"
     return noun
+
+def possesivize(name):
+    """
+    possesify a string
+    joe -> joe's
+    moses -> moses'
+    """
+    name += "'"
+    if name[len(name)-2] != "s":
+        name += "s"
+    return name
+
 
 if __name__ == '__main__':
     # print [noun() for i in range(5)]
