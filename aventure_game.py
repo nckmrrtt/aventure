@@ -8,6 +8,8 @@ AVENTUREGAME
 
 TODO: 
 
+    pickle player when crash
+
     MAP FOR MTN AND TUNNEL ASAP
     ALSO FILLEMOUT cuz they don't do danything
     ALSO rearrange town / purchases go to merchant
@@ -118,7 +120,8 @@ def fight(who_fight=None):
     if debug:
         print '<\n\nfighting:\n' + enemy.advanced_str() +'\n>\n'
 
-    encountered = words.being_adj().capitalize() + ' ' + str(enemy)
+
+    encountered = str(enemy)
     raw_input(str(player) + ' encounters a ' + encountered + '!\n')
     choice = helpful.pick_item(['yes','no','inventory'],'Fight?','inventory')
 
@@ -293,7 +296,9 @@ def pick_place(choices_arg, question='Where to next?',inv=True):
 
         print('') #get some blank line in here yo
         chosen = raw_input('').lower()
+
         if debug:
+
             if chosen[0:4] == "loc ":
                 raw_input("<debug jumping...>\n")
                 return chosen[4:]
@@ -301,13 +306,27 @@ def pick_place(choices_arg, question='Where to next?',inv=True):
                 raw_input("<debug fighting...>\n")
                 encounter_monster()
                 continue
+
             elif chosen[0:5] == "money":
-                raw_input("<debug money+100>\n")
-                player.gain_money(100)
+
+                try:
+                    gained = int(chosen[6:])
+                except:
+                    gained = 100
+
+                player.gain_money(gained)
+                raw_input("<debug money+" + str(gained) + ">\n")
                 continue
+
             elif chosen[0:6] == "health":
-                raw_input("<debug health+100>\n")
-                player.gain_health(100)
+
+                try:
+                    gained = int(chosen[7:])
+                except:
+                    gained = 100
+
+                player.gain_health(gained)   
+                raw_input("<debug health+" + str(gained) + ">\n")
                 continue
         
         try:
@@ -671,7 +690,7 @@ def improve_weapons():
         else:
             raw_input("UM. NOPE. PICK SOMETHING ELSE.\n")
 
-        print '"OKAY, I IMPROVED YER ' + str(improve).upper() + ' BY ' + str(incd) + 'POINTS OF ' + (which) + '."\n'
+        print '"OKAY, I IMPROVED YER ' + str(improve).upper() + ' BY ' + str(incd) + ' POINTS OF ' + (which) + '."\n'
         raw_input(improve.advanced_str())
         raw_input('\n"YOU' + "'" + 'RE WELCOME."\n')
         improve = "Done" #break
@@ -1046,8 +1065,8 @@ def woods_n1_0():
         raw_input("Something ominous is definitely lurking here, though...\n")
     
     next = (
-            ['woods_0_0','woods_n1_1','woods_n1_n1','mountain_base'],
-            ["East","North","South","Mountain"]
+            ['woods_0_0','woods_n1_1','woods_n1_n1'], #TODO ,'mountain_base'],
+            ["East","North","South"] # TODO,"Mountain"]
             )
 
     return pick_place(next,'Where to next?')
@@ -1127,7 +1146,7 @@ def main_tunnel():
     raw_input('There are several branching tunnels, one of which is covered in strange markings.\n')
 
     next = (
-            ['tunnel_0','tunnel_1','tunnel_strange']
+            ['tunnel_0','tunnel_1','tunnel_strange'],
             ['Left branch','Right branch','Strange markings']
             )
 
@@ -1153,6 +1172,66 @@ def tunnel_strange():
     """
     print "TODO TUNNEL S"
     return 'main_tunnel'
+
+def tunnel_maze_0():
+    """
+    you enter this tunnel from a hole in the ground
+    """
+    #raw_input('This tunnel is completely dark and incredibly small, cramped, and narrow.\n')
+    raw_input('You feel around for a way out.\n')
+    out = random.shuffle(['tunnel_maze_1','tunnel_maze_2'])
+
+    next = (
+            out,
+            ['crawl left', 'crawl right']
+            )
+
+    return pick_place(next,'Which tunnel?')
+
+def tunnel_maze_1():
+    """
+    you enter this tunnel from a hole in the ground
+    """
+    raw_input('This tunnel is completely dark and incredibly small, cramped, and narrow.\n')
+    raw_input('You feel around for a way out.\n')
+    out = random.shuffle(['tunnel_maze_0','tunnel_maze_2'])
+
+    next = (
+            out,
+            ['crawl left', 'crawl right']
+            )
+
+    return pick_place(next,'Which tunnel?')
+
+def tunnel_maze_2():
+    """
+    you enter this tunnel from a hole in the ground
+    """
+    raw_input('This tunnel is completely dark and incredibly small, cramped, and narrow.\n')
+    raw_input('You feel around for a way out.\n')
+    out = random.shuffle(['tunnel_maze_0','tunnel_maze_1'])
+
+    next = (
+            out,
+            ['crawl left', 'crawl right']
+            )
+
+    return pick_place(next,'Which tunnel?')
+
+def tunnel_maze_central():
+    """
+    you enter this tunnel from a hole in the ground
+    """
+    raw_input('This tunnel is completely dark and incredibly small, cramped, and narrow.\n')
+    raw_input('You feel around for a way out.\n')
+    out = random.shuffle(['tunnel_maze_0','tunnel_maze_1'])
+
+    next = (
+            out,
+            ['crawl left', 'crawl right']
+            )
+
+    return pick_place(next,'Which tunnel?')
 
 ### mountains ###
 
@@ -1316,20 +1395,27 @@ def start_game():
 
     player = helpful.Player(name) #name character
 
-    raw_input('\nWelcome, '+ str(player) +'!\n')
-    raw_input('You wake up slightly dizzy and very thirsty. You are sitting on a dirt path.\n')
-    raw_input('You have no idea how you got here, or even who you are.\n')
-    raw_input('The last thing you remember is an old man telling you...\n')
-    raw_input("Telling you...\n")
-    raw_input("Wow, you really can't remember anything. Your head hurts a lot.\n")
-    raw_input("You can't remember exactly what he told you. Something about dragons.\n")
-    raw_input("There's a weird fruit next to you. It has a note on it:\n")
-    raw_input("  MYTHICAL KUMQUAT\n" + \
-              "                  \n" + \
-              "  (do not lose me)\n")
-    raw_input("There's also a basket of supplies. You should take some.\n")
+    if debug:
+        print "Helpful debug commands:\n\n"
+        print "money int\nhealth int\nloc place\nfight\n\n"
+        raw_input("\n")
+
+    else:
+        raw_input('\nWelcome, '+ str(player) +'!\n')
+        raw_input('You wake up slightly dizzy and very thirsty. You are sitting on a dirt path.\n')
+        raw_input('You have no idea how you got here, or even who you are.\n')
+        raw_input('The last thing you remember is an old man telling you...\n')
+        raw_input("Telling you...\n")
+        raw_input("Wow, you really can't remember anything. Your head hurts a lot.\n")
+        raw_input("You can't remember exactly what he told you. Something about dragons.\n")
+        raw_input("There's a weird fruit next to you. It has a note on it:\n")
+        raw_input("  MYTHICAL KUMQUAT\n" + \
+                  "                  \n" + \
+                  "  (do not lose me)\n")
+        raw_input("There's also a basket of supplies. You should take some.\n")
 
     print ('\n'*10)
+    
     bag =      [
                items_lists.random_weapon('short_weapons'),
                items_lists.random_weapon('short_weapons'),

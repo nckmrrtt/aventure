@@ -164,6 +164,7 @@ def random_monster(choosefrom=None):
 
 	if choosefrom == 'boss_monsters':
 		monster_list = boss_list
+		category = choosefrom
 	else:
 		if isinstance(choosefrom,list):
 			category = random.choice(choosefrom)
@@ -211,8 +212,9 @@ def random_monster(choosefrom=None):
 	else:
 		new_inventory = monster.get_inventory()
 
+	new_name = words.being_adj().capitalize() + ' ' + monster.get_name()
 	new_health = monster.get_health() + random.randint(-5,5)
-	new_monster = monster.copy(None,new_health,new_inventory)
+	new_monster = monster.copy(new_name,new_health,new_inventory)
 	return new_monster
 
 bartender_name_list = [

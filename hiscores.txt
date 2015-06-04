@@ -8,15 +8,31 @@ S'Gutis'
 p5
 aI54
 aa(lp6
-S'jcho'
+S'The Superior John'
 p7
 aI8
 aa(lp8
-S'The Superior John'
+S'jcho'
 p9
 aI8
 aa(lp10
 S'Katana'
 p11
 aI7
+aa(lp12
+S'shni'
+p13
+aI3
+aa(lp14
+S'Laura'
+p15
+aI1
+aa(lp16
+S'Nathan Bonnes'
+p17
+aI1
+aa(lp18
+S'niko'
+p19
+aI0
 aa.
