@@ -1,14 +1,25 @@
 aventure game feature request / bug reporting 2 in 1:
 
+python modules / etc:
+cmd/testwrap/web
+
 MAJOR TODO:
 
 parse line vs simple choice?
 restructure movement/places entirely
 dictionary vs attrs
 classes even? yeh probs. for places and object and everything
+descwords for guessing what you're typing about. also renaming
 reconsider logging
 pickle vs json
 pickle player when crash
+
+TODO testing:
+
+make beta tester stacktrace sending automated
+make feature/bug/etc automated
+online multiplayer
+instructions
 
 TODO just meh: 
 
@@ -46,20 +57,16 @@ score?
 player.score?
 player title
 multiple titles
-bane of the balrog
-dragon destroyer
-monster masher
-etc
-heavy drinker?
+	 bane of the balrog
+	 dragon destroyer
+	 monster masher
+	 etc
+	 heavy drinker?
 
 drunk choices
 drunk speaking
 
 healing outside battle (armor)
-
-online multiplayer
-
-instructions
 
 grammar
 
