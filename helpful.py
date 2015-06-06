@@ -4,7 +4,7 @@ Some helpful classes and functions and stuff for AVENTUREGAME
 
 import operator
 import random
-import cPickle as pickle
+import json
 
 class Being:
 
@@ -352,7 +352,7 @@ def pick_item(choices_arg, question='Which one?',break_before=None):
 def hiscore(new_name,new_score):
 
     try:
-        pairs = pickle.load(open("hiscores.txt", "rb"))
+        pairs = json.load(open("hiscores.txt", "rb"))
     except:
         pairs = [["Gutis", 54], ["jcho", 8], ["The Superior John", 8], ["Katana", 7], ["Batman", 55]]
 
@@ -367,7 +367,7 @@ def hiscore(new_name,new_score):
     for idx in range(len(pairs)):
         hiscore_string += '{0:25} ... {1:10d}\n'.format(pairs[idx][0], pairs[idx][1])
 
-    pickle.dump(pairs, open("hiscores.txt", "wb"))
+    json.dump(pairs, open("hiscores.txt", "wb"))
 
     return hiscore_string
 
@@ -379,5 +379,5 @@ if __name__ == '__main__':
 
     chico = Being('',50,[dagz])
 
-    # print hiscore('Kenny',4)
+    print hiscore('Kenny',4)
 

@@ -15,6 +15,7 @@ import getpass
 import config
 import hashlib
 import cPickle as pickle
+import json
 
 ########### desktop/programs/python ###########
 
@@ -557,6 +558,7 @@ def box():
 	    question = 'No, really.'
 
 	pickle.dump(item, open("box.txt", "wb"))
+	#json.dump(item, open("boxjson.txt", "wb"))
 	player.drop(item)
 	player.grab(gotem)
 

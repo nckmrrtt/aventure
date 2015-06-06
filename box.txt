@@ -4,18 +4,18 @@ p1
 (dp2
 S'uses_left'
 p3
-Finf
+I40
 sS'cost'
 p4
-I249
+I7644
 sS'health'
 p5
 I0
 sS'name'
 p6
-S'Warstaff of the Ancients'
+S'Elvish Scorch of Ice'
 p7
 sS'damage'
 p8
-I50
+I99
 sb.
