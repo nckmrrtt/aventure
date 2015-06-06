@@ -4,18 +4,18 @@ p1
 (dp2
 S'uses_left'
 p3
-I8
+Finf
 sS'cost'
 p4
-F14.99
+I249
 sS'health'
 p5
-I10
+I0
 sS'name'
 p6
-S'pizza'
+S'Warstaff of the Ancients'
 p7
 sS'damage'
 p8
-I0
+I50
 sb.

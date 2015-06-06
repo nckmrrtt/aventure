@@ -23,18 +23,15 @@ def color():
                    'Grey','Lime'
                   ]
 
+    return random.choice(colors_list)
+
+def extra_adj():
+
     adverb_list = [
-                   'Neon','Bright','Light','Dark'
+                   'Neon','Bright','Light','Dark','Shimmering','Elven'
                   ]
 
-    adverb = round(random.random() -.2)
-    new = random.choice(colors_list)
-    if adverb:
-        new_adverb = ''
-        new_adverb += random.choice(adverb_list)
-        new = new_adverb+ ' ' + new
-
-    return new
+    return random.choice(adverb_list)
 
 def weapon_adj():
     
@@ -73,8 +70,13 @@ def tavern_adj():
     return random.choice(adj_list)
 
 def woods_name():
+    adverb = round(random.random() -.2)
     new = color()
+    if adverb:
+        new_adverb = extra_adj()
+        new = new_adverb + ' ' + new
     tavern_adj_toggle = round(random.random() -.1)
+
     if tavern_adj_toggle:
         new = tavern_adj() + ' ' + new
     return ("The " + new + " Woods").title()
@@ -86,15 +88,32 @@ def noun():
     return random.choice(noun_list)
 
 def pluralize(noun):
+    """
+    pluralize a string
+    pup -> pups
+    puppy -> puppies
+    """
     if noun[len(noun)-1] == "y":
         noun = noun[:-1] + "ie"
     noun = noun + "s"
     return noun
 
+def possesivize(name):
+    """
+    possesify a string
+    joe -> joe's
+    moses -> moses'
+    """
+    name += "'"
+    if name[len(name)-2] != "s":
+        name += "s"
+    return name
+
+
 if __name__ == '__main__':
     # print [noun() for i in range(5)]
     # print [pluralize(noun()) for i in range(5)]
     for i in range(10):
-        print weapon_adj()
-        # print woods_name()
+        # print weapon_adj()
+        print woods_name()
         # print value

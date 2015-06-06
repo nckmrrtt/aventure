@@ -110,6 +110,8 @@ def random_weapon(category=None):
 ###this list is in order of power
 ###each index +1 gives lots more health and lots more damage
 master_monsters_dict = {
+
+						#name, health, inventory list, loot
 	
 	'tiny_monsters':	[
 						helpful.Being('Spider',40,[helpful.Item('Venom Sac',0,30)]),
@@ -117,7 +119,7 @@ master_monsters_dict = {
 						helpful.Being('Rat',45,[helpful.Item('Claw',0,20)])
 						],
 
-	'small_monsters':	[ #TODO have money, yo
+	'small_monsters':	[ 
 						helpful.Being('Goblin',50,None,30),
 						helpful.Being('Hobgoblin',50,None,30),
 						helpful.Being('Orc',55,None,35)
@@ -131,14 +133,16 @@ master_monsters_dict = {
 
 	'large_monsters':	[
 						helpful.Being('Mountain Troll',95,None,200),
-						helpful.Being('Basilisk',100,[helpful.Item('Basilisk Fang',0,60)]),
-						helpful.Being('Balrog',125,[
-													helpful.Item('Flaming Whip',0,65),
-													helpful.Item('Flaming Greatsword',0,70)
-													], 
-													400
-									 )
+						helpful.Being('Basilisk',100,[helpful.Item('Basilisk Fang',0,60,275)]),
+						helpful.Being('Balrog',125,[helpful.Item('Flaming Whip',0,65,300),helpful.Item('Flaming Greatsword',0,70,300)],400)
+						],
+
+	'snow_monsters':	[
+						helpful.Being('Demon Snowman',75,[helpful.Item('Icicle',0,40)]),
+						helpful.Being('Snow Leopard',80,[helpful.Item('Leopard Fang',0,60)]),
+						helpful.Being('Yeti',75,[helpful.Item('Massive Icicle',0,75)])
 						]
+
 	}
 
 boss_list =				[
@@ -149,16 +153,29 @@ boss_list =				[
 						helpful.Being('Giant Kumquat Monster',700)
 						]
 
-def random_monster(category=None):
+def random_monster(choosefrom=None):
+	"""
+	takes a string, which is the monster category,
+	or a list of strings, which are monster categories
+	"""
 
-	# idx = random.randint(0,len(monster_name_dict)-1)
-	if not category:
-		category = random.choice(master_monsters_dict.keys())
+	if not choosefrom:
+		choosefrom = random.choice(master_monsters_dict.keys())
 
-	if category == 'boss_monsters':
+	if choosefrom == 'boss_monsters':
 		monster_list = boss_list
+		category = choosefrom
 	else:
+		if isinstance(choosefrom,list):
+			category = random.choice(choosefrom)
+		elif isinstance(choosefrom,str):
+			category = choosefrom
+		else:
+			print "<something went wrong, notify admin>\n"
+
+		#will crash if input is wrong type
 		monster_list = master_monsters_dict[category]
+	
 	monster = random.choice(monster_list)
 
 	inventory_amount = 1
@@ -195,24 +212,31 @@ def random_monster(category=None):
 	else:
 		new_inventory = monster.get_inventory()
 
+	new_name = words.being_adj().capitalize() + ' ' + monster.get_name()
 	new_health = monster.get_health() + random.randint(-5,5)
-	new_monster = monster.copy(None,new_health,new_inventory)
+	new_monster = monster.copy(new_name,new_health,new_inventory)
 	return new_monster
 
+bartender_name_list = [
+					   'Mysterious Bearded Man','Chuck Wagon','Merlin','Bob Ross','Harpo Dooblat','Squim Rigbo'
+					   ]
+
+def random_bartender_name():
+	return random.choice(bartender_name_list)
+
 npc_name_list = [
-				 'Nustellan LaMetrons', 'Joe', 'Mysterious Bearded Man',
-				 'Merlin', 'Thorgood Trollsmash', 'Alfredo Bersconinni'
+				 'Nustellan LaMetrons','Joe','Thorgood Trollsmash','Alfredo Berlosconinni','Mr. Rogers'
 				 ]
 
 def random_npc():
-	return helpful.Being('Joe')
+	return helpful.Being(random.choice(npc_name_list))
 
 if __name__ == '__main__':
 
 	for i in range(4):
 		# r = random_weapon('thrown_weapons')
 		# print r.advanced_str() + '\n'
-		monster = random_monster('large_monsters')
+		monster = random_monster()
 		print monster.advanced_str()
 
 

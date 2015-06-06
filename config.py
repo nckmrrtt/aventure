@@ -1,5 +1,11 @@
 """
+
 Some secret fun times for AVENTUREGAME
+
+This file is filled with sneaky, confusing things to confound people who are trying to guess the cheat codes.
+
+Good luck, cheaters.
+
 """
 
 import items_lists
