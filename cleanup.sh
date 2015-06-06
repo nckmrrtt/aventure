@@ -3,3 +3,4 @@
 rm -rf *.pyc
 rm -rf debug.log
 rm -rf *~
+rm -rf \#*
