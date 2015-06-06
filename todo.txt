@@ -8,11 +8,13 @@ dictionary vs attrs
 classes even? yeh probs. for places and object and everything
 reconsider logging
 pickle vs json
-
+pickle player when crash
 
 TODO just meh: 
 
-choices not change?
+MAP FOR MTN AND TUNNEL ASAP
+ALSO FILLEMOUT cuz they don't do danything
+ALSO rearrange town / purchases go to merchant
 
 good pts vs evil pts 
 too many evil and a demon comes and eats you 

@@ -5,67 +5,6 @@ AVENTUREGAME
 
 """
 
-"""
-
-TODO:
-
-    pickle player when crash
-
-    MAP FOR MTN AND TUNNEL ASAP
-    ALSO FILLEMOUT cuz they don't do danything
-    ALSO rearrange town / purchases go to merchant
-
-    choices not change?
-
-    good pts vs evil pts
-	too many evil and a demon comes and eats you
-	but too few and you become a pacifist and lose all your weapons
-
-    map to dragon money
-
-    if uses < 0 then can use outside battle ? but what about ranged weapons?
-    uses shows healing
-
-    diplomacy? swag points? reputation?
-
-    In tavern change to code within tavern func
-
-    monsters with no inventory => scratch, bite, etc?
-
-    find items laying around
-
-    add more names, adjs, etc
-
-    improve ability to buy weapons
-
-    enemy deaths more cool
-    player death(s) have more cool
-
-    score?
-    player.score?
-    player title
-    multiple titles
-	bane of the balrog
-	dragon destroyer
-	monster masher
-	etc
-	heavy drinker?
-
-    drunk choices
-    drunk speaking
-
-    healing outside battle (armor)
-
-    online multiplayer
-
-    instructions
-
-    grammar
-
-    yoloswag
-
-"""
-
 import logging #LOG: uncomment all lines containing this comment to enable error logging to a file
 logging.basicConfig(level=logging.DEBUG, filename='debug.log') #LOG
 
